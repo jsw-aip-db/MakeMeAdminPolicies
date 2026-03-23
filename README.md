@@ -63,7 +63,7 @@ After installation, verify that MakeMeAdmin is running:
 
 ```powershell
 # Check if MakeMeAdmin service is running
-Get-Service -Name "Make Me Admin Service" | Select-Object Status, DisplayName
+Get-Service -Name "Make Me Admin" | Select-Object Status, DisplayName
 ```
 
 The service status should show as "Running".
@@ -156,10 +156,7 @@ For policies to take immediate effect, restart the MakeMeAdmin service:
 
 ```powershell
 # Restart the Make Me Admin service
-Restart-Service -Name "Make Me Admin Service"
-```
-
-## Policy Configuration Details
+Restart-Service -Name "Make Me Admin"
 
 The script configures the following registry values:
 
@@ -240,7 +237,7 @@ For more information, see [About Execution Policies](https://learn.microsoft.com
 
 ### MakeMeAdmin Service Not Found
 
-**Error**: Service "Make Me Admin Service" not found
+**Error**: Service "Make Me Admin" not found
 
 **Solution**:
 1. Verify MakeMeAdmin is installed:
@@ -260,7 +257,7 @@ For more information, see [About Execution Policies](https://learn.microsoft.com
    ```
 2. Restart the MakeMeAdmin service:
    ```powershell
-   Restart-Service -Name "Make Me Admin Service"
+   Restart-Service -Name "Make Me Admin"
    ```
 3. If still not working, try restarting your computer
 

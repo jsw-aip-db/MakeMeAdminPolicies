@@ -55,3 +55,64 @@ $cannedReasons = @(
 New-ItemProperty -Path $regPath -Name 'Canned Reasons' -Value $cannedReasons -PropertyType MultiString -Force | Out-Null
 
 Write-Host "Registry configuration completed successfully." -ForegroundColor Green
+
+# --- Copy Group Policy Templates ---
+
+# Locate the MakeMeAdmin Group Policy templates folder
+$gpSourceDirs = @(
+    (Join-Path $env:ProgramFiles        'Make Me Admin\Group Policy'),
+    (Join-Path ${env:ProgramFiles(x86)} 'Make Me Admin\Group Policy')
+)
+
+$gpSourceDir = $null
+foreach ($dir in $gpSourceDirs) {
+    if (Test-Path $dir) {
+        $gpSourceDir = $dir
+        break
+    }
+}
+
+if ($null -eq $gpSourceDir) {
+    Write-Host "MakeMeAdmin Group Policy templates not found. Skipping template copy." -ForegroundColor Yellow
+    Write-Host "Expected location: $($gpSourceDirs[0])" -ForegroundColor Yellow
+} else {
+    $policyDefinitions = Join-Path $env:SystemRoot 'PolicyDefinitions'
+    $policyDefinitionsEnUS = Join-Path $policyDefinitions 'en-US'
+
+    # Ensure destination directories exist
+    if (-not (Test-Path $policyDefinitions)) {
+        New-Item -Path $policyDefinitions -ItemType Directory -Force | Out-Null
+    }
+    if (-not (Test-Path $policyDefinitionsEnUS)) {
+        New-Item -Path $policyDefinitionsEnUS -ItemType Directory -Force | Out-Null
+    }
+
+    # Copy .admx files
+    $admxFiles = Get-ChildItem -Path $gpSourceDir -Filter '*.admx' -File
+    if ($admxFiles.Count -eq 0) {
+        Write-Host "No .admx files found in $gpSourceDir" -ForegroundColor Yellow
+    } else {
+        foreach ($file in $admxFiles) {
+            Copy-Item -Path $file.FullName -Destination $policyDefinitions -Force
+            Write-Host "Copied $($file.Name) to $policyDefinitions" -ForegroundColor Cyan
+        }
+    }
+
+    # Copy .adml files from the en-US subfolder
+    $admlSourceDir = Join-Path $gpSourceDir 'en-US'
+    if (-not (Test-Path $admlSourceDir)) {
+        Write-Host "en-US language folder not found at $admlSourceDir. Skipping .adml copy." -ForegroundColor Yellow
+    } else {
+        $admlFiles = Get-ChildItem -Path $admlSourceDir -Filter '*.adml' -File
+        if ($admlFiles.Count -eq 0) {
+            Write-Host "No .adml files found in $admlSourceDir" -ForegroundColor Yellow
+        } else {
+            foreach ($file in $admlFiles) {
+                Copy-Item -Path $file.FullName -Destination $policyDefinitionsEnUS -Force
+                Write-Host "Copied $($file.Name) to $policyDefinitionsEnUS" -ForegroundColor Cyan
+            }
+        }
+    }
+
+    Write-Host "Group Policy templates copied successfully." -ForegroundColor Green
+}

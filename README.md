@@ -40,7 +40,7 @@ MakeMeAdmin can be installed using several methods:
 
 ```powershell
 # Install MakeMeAdmin using Windows Package Manager
-winget install --id=Sinclair.MakeMeAdmin -e
+winget install --id=pseymour.MakeMeAdmin -e
 ```
 
 #### Method 2: Using Chocolatey

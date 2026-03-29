@@ -149,6 +149,11 @@ The script will:
      - Software installation
      - System update or configuration
      - Driver or hardware issue
+5. **Copy Group Policy Templates**: Copies the MakeMeAdmin ADMX/ADML template files from the MakeMeAdmin installation directory to the local Group Policy store:
+   - `SinclairBase.admx` and `SinclairMakeMeAdmin.admx` → `C:\Windows\PolicyDefinitions\`
+   - `SinclairBase.adml` and `SinclairMakeMeAdmin.adml` → `C:\Windows\PolicyDefinitions\en-US\`
+
+   This step is skipped with a warning if MakeMeAdmin is not installed.
 
 #### Step 4: Restart MakeMeAdmin Service (Optional)
 
